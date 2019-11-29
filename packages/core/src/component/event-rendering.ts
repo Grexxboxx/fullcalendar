@@ -1,13 +1,14 @@
-import { EventDef, EventTuple, EventDefHash } from '../structs/event'
-import { EventStore } from '../structs/event-store'
-import { DateRange, invertRanges, intersectRanges } from '../datelib/date-range'
-import { Duration } from '../datelib/duration'
-import { computeVisibleDayRange } from '../util/misc'
-import { Seg } from './DateComponent'
+import {EventDef, EventTuple, EventDefHash} from '../structs/event'
+import {EventStore} from '../structs/event-store'
+import {DateRange, invertRanges, intersectRanges} from '../datelib/date-range'
+import {Duration} from '../datelib/duration'
+import {computeVisibleDayRange} from '../util/misc'
+import {dataToStyle} from '../util/html'
+import {Seg} from './DateComponent'
 import EventApi from '../api/EventApi'
-import { EventUi, EventUiHash, combineEventUis } from './event-ui'
-import { mapHash } from '../util/object'
-import { ComponentContext } from './Component'
+import {EventUi, EventUiHash, combineEventUis} from './event-ui'
+import {mapHash} from '../util/object'
+import {ComponentContext} from './Component'
 
 export interface EventRenderRange extends EventTuple {
   ui: EventUi
@@ -110,7 +111,7 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
     }
   }
 
-  return { bg: bgRanges, fg: fgRanges }
+  return {bg: bgRanges, fg: fgRanges}
 }
 
 export function hasBgRendering(def: EventDef) {
@@ -118,10 +119,10 @@ export function hasBgRendering(def: EventDef) {
 }
 
 export function filterSegsViaEls(context: ComponentContext, segs: Seg[], isMirror: boolean) {
-  let { calendar, view } = context
+  let {calendar, view} = context
 
   if (calendar.hasPublicHandlers('eventRender')) {
-    segs = segs.filter(function(seg) {
+    segs = segs.filter(function (seg) {
       let custom = calendar.publiclyTrigger('eventRender', [
         {
           event: new EventApi(
@@ -151,6 +152,7 @@ export function filterSegsViaEls(context: ComponentContext, segs: Seg[], isMirro
   for (let seg of segs) {
     setElSeg(seg.el, seg)
   }
+  setTimeout(dataToStyle, 1)
 
   return segs
 }
@@ -167,7 +169,7 @@ export function getElSeg(el: HTMLElement): Seg | null {
 // event ui computation
 
 export function compileEventUis(eventDefs: EventDefHash, eventUiBases: EventUiHash) {
-  return mapHash(eventDefs, function(eventDef: EventDef) {
+  return mapHash(eventDefs, function (eventDef: EventDef) {
     return compileEventUi(eventDef, eventUiBases)
   })
 }
@@ -192,7 +194,7 @@ export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
 // triggers
 
 export function triggerRenderedSegs(context: ComponentContext, segs: Seg[], isMirrors: boolean) {
-  let { calendar, view } = context
+  let {calendar, view} = context
 
   if (calendar.hasPublicHandlers('eventPositioned')) {
 
@@ -215,12 +217,12 @@ export function triggerRenderedSegs(context: ComponentContext, segs: Seg[], isMi
   }
 
   if (!calendar.state.loadingLevel) { // avoid initial empty state while pending
-    calendar.afterSizingTriggers._eventsPositioned = [ null ] // fire once
+    calendar.afterSizingTriggers._eventsPositioned = [null] // fire once
   }
 }
 
 export function triggerWillRemoveSegs(context: ComponentContext, segs: Seg[], isMirrors: boolean) {
-  let { calendar, view } = context
+  let {calendar, view} = context
 
   for (let seg of segs) {
     calendar.trigger('eventElRemove', seg.el)
@@ -249,7 +251,7 @@ export function triggerWillRemoveSegs(context: ComponentContext, segs: Seg[], is
 // is-interactable
 
 export function computeEventDraggable(context: ComponentContext, eventDef: EventDef, eventUi: EventUi) {
-  let { calendar, view } = context
+  let {calendar, view} = context
   let transformers = calendar.pluginSystem.hooks.isDraggableTransformers
   let val = eventUi.startEditable
 
